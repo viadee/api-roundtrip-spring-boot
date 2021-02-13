@@ -1,0 +1,217 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.viadee.api.roundtrip</groupId>
+	<artifactId>api-roundtrip-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>integrationtest</artifactId>
+  <name>API Integration Test</name>
+  <description>Integration test with generated client code</description>
+
+  <properties>
+    <swagger.annotations.version>1.6.2</swagger.annotations.version>
+    <jackson.version>2.12.1</jackson.version>
+    <openapitools.jackson.nullable.version>0.2.1</openapitools.jackson.nullable.version>
+    <jersey.version>2.27</jersey.version>
+    <findbugs.version>3.0.2</findbugs.version>
+    <junit.jupiter.version>5.5.2</junit.jupiter.version>
+    <junit.platform.version>1.5.2</junit.platform.version>
+  </properties>
+
+  <dependencies>
+
+    <!-- ====================================================== -->
+    <!-- dependencies are needed for the client being generated -->
+    <!-- ====================================================== -->
+
+    <!-- Swagger annotations -->
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger.annotations.version}</version>
+    </dependency>
+
+    <!-- Jackson dependencies for JSON mapping -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-base</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>${openapitools.jackson.nullable.version}</version>
+    </dependency>
+
+    <!-- javax @Nullable annotation dependency not available with java 11 -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>${findbugs.version}</version>
+    </dependency>
+
+    <!-- jersey for javax.ws.rs dependencies GenericType and ContextResolver -->
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+    <!-- Unit Tests -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-runner</artifactId>
+      <version>${junit.platform.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+
+  <build>
+    <plugins>
+
+      <!-- REST Client generation -->
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>5.0.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+
+              <generatorName>java</generatorName>
+              <library>native</library>
+
+              <configOptions>
+                <dateLibrary>java8</dateLibrary>
+              </configOptions>
+
+              <inputSpec>${project.parent.basedir}/api/target/openapi.json</inputSpec>
+
+              <apiPackage>de.viadee.api.roundtrip.client.api</apiPackage>
+              <invokerPackage>de.viadee.api.roundtrip.client.api</invokerPackage>
+              <modelPackage>de.viadee.api.roundtrip.client.api.model</modelPackage>
+
+              <!-- Source generation only -->
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateModelDocumentation>false</generateModelDocumentation>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <supportingFilesToGenerate>
+                AbstractOpenApiSchema.java,ApiClient.java,ApiException.java,ApiResponse.java,JSON.java,Pair.java,RFC3339DateFormat.java
+              </supportingFilesToGenerate>
+
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Integration Test Phase with failsafe -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <excludes>
+            <exclude>*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <!-- Skip install and deploy phase for integration tests -->
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <!-- Integration test profile. 
+      Explicitly triggered with -P integrationtest or by environment variable "integrationtest" set 
+    -->
+    <profile>
+      <id>integrationtest</id>
+      <activation>
+        <property>
+          <name>integrationtest</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.22.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <includes>
+                <include>**/*IntegrationTest.java</include>
+                <include>**/IT*.java</include>
+                <include>**/*IT.java</include>
+                <include>**/*ITCase.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

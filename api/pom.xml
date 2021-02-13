@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.viadee.api.roundtrip</groupId>
+	<artifactId>api-roundtrip-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>api</artifactId>
+  <name>API Server</name>
+  <description>REST API for API roundtrip example</description>
+
+  <properties>
+    <spring.boot.version>2.4.2</spring.boot.version>
+    <springdoc.version>1.5.3</springdoc.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${spring.boot.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- OpenAPI Doc with Spring Doc -->
+
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-webmvc-core</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+
+    <!-- Swagger UI by Spring Doc (not necessarily needed but helpful) -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- ============================== -->
+      <!-- Spring Doc API File Generation -->
+      <!-- ============================== -->
+
+      <!-- Identify a free port for the spring boot integration test phase -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>reserve-tomcat-port</id>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <portNames>
+                <portName>tomcat.http.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Spring boot helper plugin starting and stopping the Spring Boot app -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.boot.version}</version>
+        <configuration>
+          <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
+        </configuration>
+        <executions>
+          <execution>
+            <id>pre-integration-test</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>--server.port=${tomcat.http.port}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>post-integration-test</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- Spring Doc OpenAPI download -->
+      <plugin>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs</apiDocsUrl>
+        </configuration>
+      </plugin>
+
+      <!--
+        Maven Integration Test Phase (failsafe)
+        Not mandatory for springdoc generation, but proper way to set it
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.0.0-M5</version>
+        <configuration>
+          <systemPropertyVariables>
+            <test.server.port>${tomcat.http.port}</test.server.port>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

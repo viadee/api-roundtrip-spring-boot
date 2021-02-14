@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 						email = "cloud@viadee.de"), 
 				license = @License(
 						name = "BSD 3-Clause License", 
-						url = "https://github.com/viadee")), 
+						url = "https://github.com/viadee/api-roundtrip-spring-boot/blob/main/LICENSE")), 
 		servers = @Server(url = "http://localhost:8080"))
 class OpenAPIConfiguration {
 }

@@ -18,7 +18,7 @@
     <jersey.version>2.27</jersey.version>
     <findbugs.version>3.0.2</findbugs.version>
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
-    <junit.platform.version>1.5.2</junit.platform.version>
+    <junit.platform.version>1.7.1</junit.platform.version>
   </properties>
 
   <dependencies>

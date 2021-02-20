@@ -15,7 +15,7 @@
     <swagger.annotations.version>1.6.2</swagger.annotations.version>
     <jackson.version>2.12.1</jackson.version>
     <openapitools.jackson.nullable.version>0.2.1</openapitools.jackson.nullable.version>
-    <jersey.version>2.27</jersey.version>
+    <org.apache.cxf.version>3.4.2</org.apache.cxf.version>
     <findbugs.version>3.0.2</findbugs.version>
   </properties>
 
@@ -78,11 +78,13 @@
 
     <!-- jersey for javax.ws.rs dependencies GenericType and ContextResolver -->
     <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-json-jackson</artifactId>
-      <version>${jersey.version}</version>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>${org.apache.cxf.version}</version>
     </dependency>
+    
   </dependencies>
+    
 
   <!-- REST Client generation -->
   <build>

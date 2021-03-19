@@ -8,12 +8,12 @@ updates:
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/api" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "monthly"
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/client" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "monthly"
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/integrationtest" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "monthly"

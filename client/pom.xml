@@ -12,7 +12,7 @@
   <description>Java client for API consumer development development</description>
 
   <properties>
-    <swagger.annotations.version>1.6.3</swagger.annotations.version>
+    <swagger.annotations.version>1.6.5</swagger.annotations.version>
     <jackson.version>2.13.1</jackson.version>
     <openapitools.jackson.nullable.version>0.2.2</openapitools.jackson.nullable.version>
     <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>

@@ -14,7 +14,7 @@
   <description>REST API for API roundtrip example</description>
 
   <properties>
-    <spring.boot.version>2.4.4</spring.boot.version>
+    <spring.boot.version>2.6.4</spring.boot.version>
     <springdoc.version>1.5.13</springdoc.version>
   </properties>
 

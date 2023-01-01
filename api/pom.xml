@@ -15,7 +15,7 @@
 
   <properties>
     <spring.boot.version>2.7.6</spring.boot.version>
-    <springdoc.version>1.6.13</springdoc.version>
+    <springdoc.version>1.6.14</springdoc.version>
   </properties>
 
   <dependencies>
